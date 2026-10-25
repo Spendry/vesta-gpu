@@ -70,3 +70,7 @@ No CUDA Toolkit or Visual Studio is needed. The kernel compiler comes from pip.
 ## Credit
 
 GPT-2 weights by OpenAI, loaded through Hugging Face [transformers](https://github.com/huggingface/transformers).
+
+## License
+
+Code under [MIT](LICENSE). Text (this README, GRAMMAR.md, QUESTIONS.md) under [CC BY 4.0](LICENSE-TEXT).
