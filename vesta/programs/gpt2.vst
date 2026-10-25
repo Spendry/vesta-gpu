@@ -1,0 +1,82 @@
+# GPT-2 small, one decode step. Q numbers are from QUESTIONS.md.
+
+residue x                        # the token
+residue t                        # its position
+
+axis d = 768
+axis h = 12
+axis e = 64
+axis f = 3072
+axis n = 50257
+axis j = 2304
+axis l = 12
+axis s = t + 1                   # positions seen so far, this one included
+
+residue wte[n, d]
+residue wpe[s, d]
+residue ln1w[l, d]
+residue ln1b[l, d]
+residue qkvw[l, d, j]
+residue qkvb[l, j]
+residue ow[l, d, d]
+residue ob[l, d]
+residue ln2w[l, d]
+residue ln2b[l, d]
+residue fcw[l, d, f]
+residue fcb[l, f]
+residue pw[l, f, d]
+residue pb[l, d]
+residue lnfw[d]
+residue lnfb[d]
+residue keys[l, s, h, e]
+residue vals[l, s, h, e]
+
+# Q1  what does this token mean, here
+z0[d] = wte[x, d] + wpe[t, d]
+
+zL[d] = fold step l: z0 as z
+    # Q2  the state on a common scale
+    m1 = fold sum d: z[d] / 768
+    v1 = fold sum d: (z[d] - m1) * (z[d] - m1) / 768
+    a[d] = (z[d] - m1) / sqrt(v1 + 0.00001) * ln1w[l, d] + ln1b[l, d]
+
+    # Q3  what it asks, offers, carries
+    qkv[j] = (fold sum d: a[d] * qkvw[l, d, j]) + qkvb[l, j]
+    q[h, e] = qkv[h * 64 + e]
+
+    # Q4  what the model has seen
+    residue keys[l, t, h, e] <- qkv[768 + h * 64 + e]
+    residue vals[l, t, h, e] <- qkv[1536 + h * 64 + e]
+
+    # Q5  how well each past position fits
+    sc[h, s] = (fold sum e: q[h, e] * keys[l, s, h, e]) / 8
+
+    # Q6  how much attention each gets
+    mx[h] = fold max s: sc[h, s]
+    ex[h, s] = exp(sc[h, s] - mx[h])
+    w[h, s] = ex[h, s] / (fold sum s: ex[h, s])
+
+    # Q7  what the past says back
+    o[h, e] = fold sum s: w[h, s] * vals[l, s, h, e]
+    oo[d] = fold sum h: (fold sum e: o[h, e] * ow[l, h * 64 + e, d])
+    z1[d] = z[d] + oo[d] + ob[l, d]
+
+    # Q8  what the token makes of it
+    m2 = fold sum d: z1[d] / 768
+    v2 = fold sum d: (z1[d] - m2) * (z1[d] - m2) / 768
+    b[d] = (z1[d] - m2) / sqrt(v2 + 0.00001) * ln2w[l, d] + ln2b[l, d]
+    u[f] = (fold sum d: b[d] * fcw[l, d, f]) + fcb[l, f]
+    g[f] = 0.5 * u[f] * (1 + tanh(0.7978845608028654 * (u[f] + 0.044715 * u[f] * u[f] * u[f])))
+    z2[d] = z1[d] + (fold sum f: g[f] * pw[l, f, d]) + pb[l, d]
+    -> z2
+end
+
+# Q9  how likely each next word
+m3 = fold sum d: zL[d] / 768
+v3 = fold sum d: (zL[d] - m3) * (zL[d] - m3) / 768
+c[d] = (zL[d] - m3) / sqrt(v3 + 0.00001) * lnfw[d] + lnfb[d]
+logit[n] = fold sum d: c[d] * wte[n, d]
+
+# Q10 which word comes next (ties go to the lowest id)
+best = fold max n: logit[n]
+next = fold min n: fork logit[n] == best ? n : 50257

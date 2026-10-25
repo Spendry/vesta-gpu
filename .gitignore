@@ -1,0 +1,30 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Temp
+*.tmp
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Generated: rebuilt by the scripts that write them
+gpt2_step.cu
+wikitext2_test.txt
+
+# Prose-gate reports are never committed
+prose-gate-report.md
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Bench output
+g0_results.json

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vesta-gpu"
+version = "0.1.0"
+description = "A four-form language and a compiler that runs a GPT-2 decode step as one persistent CUDA kernel"
+readme = "README.md"
+requires-python = ">=3.10"
+# torch is installed first from PyTorch's CUDA index (see README), so it is not pinned here
+dependencies = [
+    "numpy",
+    "transformers",
+    "cuda-bindings>=12.9,<13",
+    "nvidia-cuda-nvrtc-cu12>=12.8",
+]
+
+[project.optional-dependencies]
+bench = ["triton-windows; sys_platform == 'win32'"]
+
+[tool.setuptools]
+packages = ["vesta"]
+
+[tool.setuptools.package-data]
+vesta = ["programs/*.vst"]
