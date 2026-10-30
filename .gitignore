@@ -28,3 +28,4 @@ prose-gate-report.md
 
 # Bench output
 g0_results.json
+.venv/

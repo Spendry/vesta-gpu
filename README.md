@@ -27,7 +27,11 @@ This starts from a Windows PC with an NVIDIA GPU and nothing else installed. It 
 
 **1. NVIDIA driver.** Install the newest Game Ready or Studio driver from [nvidia.com/drivers](https://www.nvidia.com/drivers). It must be version 570 or newer.
 
-**2. Python.** Install Python 3.12 or 3.13 from [python.org/downloads](https://www.python.org/downloads/). On the installer's first screen, tick **Add python.exe to PATH**. Use the python.org installer, not the Microsoft Store version. Newer versions (3.14 and up) won't work yet, because PyTorch has no CUDA build for them. If you already have one, install 3.13 alongside it and type `py -3.13` wherever this README says `python`.
+**2. Python 3.13.** PyTorch has no CUDA build for Python 3.14 or newer yet, so use 3.13. It installs alongside any other Python you have.
+
+- Go to [python.org/downloads/windows](https://www.python.org/downloads/windows/), find the newest Python 3.13 release, and download **Windows installer (64-bit)**. Don't use the Microsoft Store version.
+- Run it. Leave **Use admin privileges when installing py.exe** ticked, then click **Install Now**.
+- To check it, open **PowerShell** and run `py -3.13 --version`. It should print `Python 3.13.` and a number.
 
 **3. Git.** Install [Git for Windows](https://git-scm.com/download/win) with its default options. Or skip it, and use **Code → Download ZIP** on this page, then unzip.
 
@@ -36,16 +40,17 @@ This starts from a Windows PC with an NVIDIA GPU and nothing else installed. It 
 ```
 git clone https://github.com/Spendry/vesta-gpu
 cd vesta-gpu
-python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
-python -m pip install -e .[bench]
+py -3.13 -m venv .venv
+.venv\Scripts\python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
+.venv\Scripts\python -m pip install -e .[bench]
 ```
 
-The first `pip` line downloads PyTorch with CUDA, about 3 GB.
+The third line makes a private Python environment in the `.venv` folder, so nothing is installed into your system Python. The torch line downloads PyTorch with CUDA, about 3 GB.
 
 **5. Run the benchmark.**
 
 ```
-python bench/g0_bench.py
+.venv\Scripts\python bench/g0_bench.py
 ```
 
 It measures your GPU's memory bandwidth, then times five ways of running GPT-2, each five times. The first run downloads GPT-2's weights (about 500 MB). It takes 10 to 15 minutes.
@@ -53,6 +58,22 @@ It measures your GPU's memory bandwidth, then times five ways of running GPT-2, 
 **6. Read the result.** Near the end, two lines start with `PASS` or `FAIL`. The first checks that the timings were steady and that Vesta's tokens match PyTorch's. The second is the result, with the speed of each way at batch 1 and batch 8. `PASS` there means Vesta was at least 1.2 times `torch.compile` at batch 1, and at least as fast at batch 8. Everything is also saved in `g0_results.json`.
 
 Tested on Windows 11 with an RTX 5070. Other NVIDIA GPUs from the last few generations should run it, but the numbers will differ.
+
+## Uninstall
+
+Everything the run adds is in five places. In PowerShell, from inside the `vesta-gpu` folder:
+
+```
+.venv\Scripts\python -m pip cache purge
+cd ..
+Remove-Item -Recurse -Force vesta-gpu
+Remove-Item -Recurse -Force $env:USERPROFILE\.cache\huggingface\hub\models--gpt2
+Remove-Item -Recurse -Force $env:LOCALAPPDATA\Temp\torchinductor_$env:USERNAME, $env:USERPROFILE\.triton -ErrorAction SilentlyContinue
+```
+
+In order, these clear pip's download cache (about 3 GB), delete the code and its `.venv`, delete GPT-2's weights, and delete `torch.compile`'s caches. If you use Hugging Face for anything else, keep the rest of `.cache\huggingface`.
+
+Then, if you don't need them for anything else, remove **Python 3.13** and **Git** in **Settings → Apps → Installed apps**. Keep the NVIDIA driver.
 
 ## How it fits together
 
