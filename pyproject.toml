@@ -7,7 +7,7 @@ name = "vesta-gpu"
 version = "0.1.0"
 description = "A four-form language and a compiler that runs a GPT-2 decode step as one persistent CUDA kernel"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 license = { text = "MIT (code), CC-BY-4.0 (text)" }
 # torch is installed first from PyTorch's CUDA index (see README), so it is not pinned here
 dependencies = [

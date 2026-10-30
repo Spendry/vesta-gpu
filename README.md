@@ -27,11 +27,11 @@ This starts from a Windows PC with an NVIDIA GPU and nothing else installed. It 
 
 **1. NVIDIA driver.** Install the newest Game Ready or Studio driver from [nvidia.com/drivers](https://www.nvidia.com/drivers). It must be version 570 or newer.
 
-**2. Python.** Install Python 3.12 or 3.13 from [python.org/downloads](https://www.python.org/downloads/). On the installer's first screen, tick **Add python.exe to PATH**. Use the python.org installer, not the Microsoft Store version.
+**2. Python.** Install Python 3.12 or 3.13 from [python.org/downloads](https://www.python.org/downloads/). On the installer's first screen, tick **Add python.exe to PATH**. Use the python.org installer, not the Microsoft Store version. Newer versions (3.14 and up) won't work yet, because PyTorch has no CUDA build for them. If you already have one, install 3.13 alongside it and type `py -3.13` wherever this README says `python`.
 
 **3. Git.** Install [Git for Windows](https://git-scm.com/download/win) with its default options. Or skip it, and use **Code → Download ZIP** on this page, then unzip.
 
-**4. Get the code and install it.** Open **PowerShell** and run these one at a time:
+**4. Get the code and install it.** Open **PowerShell** and run these one at a time. Paste one line, press Enter, and wait for it to finish before the next:
 
 ```
 git clone https://github.com/Spendry/vesta-gpu
