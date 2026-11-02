@@ -33,7 +33,7 @@ This starts from a Windows PC with an NVIDIA GPU and nothing else installed. It 
 - Run it. Leave **Use admin privileges when installing py.exe** ticked, then click **Install Now**.
 - To check it, open **PowerShell** and run `py -3.13 --version`. It should print `Python 3.13.` and a number.
 
-**3. Git.** Install [Git for Windows](https://git-scm.com/download/win) with its default options. Or skip it, and use **Code → Download ZIP** on this page, then unzip.
+**3. Git.** Install [Git for Windows](https://git-scm.com/download/win) with its default options.
 
 **4. Get the code and install it.** Open **PowerShell** and run these one at a time. Paste one line, press Enter, and wait for it to finish before the next:
 
