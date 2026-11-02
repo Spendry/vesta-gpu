@@ -39,9 +39,17 @@ This starts from a Windows PC with an NVIDIA GPU and nothing else installed. It 
 
 ```
 git clone https://github.com/Spendry/vesta-gpu
+```
+```
 cd vesta-gpu
+```
+```
 py -3.13 -m venv .venv
+```
+```
 .venv\Scripts\python -m pip install torch --index-url https://download.pytorch.org/whl/cu128
+```
+```
 .venv\Scripts\python -m pip install -e .[bench]
 ```
 
