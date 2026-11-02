@@ -29,6 +29,8 @@ This starts from a Windows PC with an NVIDIA GPU and nothing else installed. It 
 
 **2. Python 3.13.** PyTorch has no CUDA build for Python 3.14 or newer yet, so use 3.13. It installs alongside any other Python you have.
 
+If you already have Python 3.14 or newer, skip the download: open **PowerShell**, run `py install 3.13`, and go to the check below.
+
 - Go to [python.org/downloads/windows](https://www.python.org/downloads/windows/), find the newest Python 3.13 release, and download **Windows installer (64-bit)**. Don't use the Microsoft Store version.
 - Run it. Leave **Use admin privileges when installing py.exe** ticked, then click **Install Now**.
 - To check it, open **PowerShell** and run `py -3.13 --version`. It should print `Python 3.13.` and a number.
